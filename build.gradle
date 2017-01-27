@@ -4,6 +4,7 @@ buildscript {
     }
     repositories {
         mavenCentral()
+
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
@@ -26,10 +27,15 @@ repositories {
     mavenCentral()
 }
 
+bootRun {
+    jvmArgs "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
+}
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web')
+    compile("org.springframework.boot:spring-boot-starter-data-rest")
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    compile("com.h2database:h2")
+
+    compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
+
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
