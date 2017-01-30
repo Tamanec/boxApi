@@ -1,4 +1,4 @@
-package ru.altarix;
+package ru.altarix.marm;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

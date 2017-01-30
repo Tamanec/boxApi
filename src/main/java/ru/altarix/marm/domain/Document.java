@@ -1,7 +1,12 @@
-package ru.altarix.domain;
+package ru.altarix.marm.domain;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.hibernate.annotations.Type;
+import ru.altarix.marm.utils.TimestampJsonSerializer;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Map;
 
 @Entity
 public class Document {
@@ -18,12 +23,15 @@ public class Document {
     private String extId;
 
     @Column(name = "import_date")
+    @JsonSerialize(using = TimestampJsonSerializer.class)
     private Timestamp importDate;
 
     @Column(name = "export_date")
+    @JsonSerialize(using = TimestampJsonSerializer.class)
     private Timestamp exportDate;
 
     @Column(name = "publish_date")
+    @JsonSerialize(using = TimestampJsonSerializer.class)
     private Timestamp publishDate;
 
     private String title;
@@ -42,7 +50,8 @@ public class Document {
     @Column(name = "name_upper")
     private String nameUpper;
 
-    private String data;
+    @Type(type = "jsonb")
+    private Map<String, Object> data;
 
     public Long getId() {
         return id;
@@ -148,11 +157,11 @@ public class Document {
         this.nameUpper = nameUpper;
     }
 
-    public String getData() {
+    public Map<String, Object> getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(Map<String, Object> data) {
         this.data = data;
     }
 }

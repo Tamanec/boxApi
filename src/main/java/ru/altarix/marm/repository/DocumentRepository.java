@@ -1,7 +1,7 @@
-package ru.altarix.repository;
+package ru.altarix.marm.repository;
 
 import org.springframework.data.repository.CrudRepository;
-import ru.altarix.domain.Document;
+import ru.altarix.marm.domain.Document;
 
 public interface DocumentRepository extends CrudRepository<Document, Long> {
 }

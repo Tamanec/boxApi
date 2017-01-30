@@ -1,10 +1,10 @@
-package ru.altarix.api;
+package ru.altarix.marm.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.altarix.domain.Document;
-import ru.altarix.repository.DocumentRepository;
+import ru.altarix.marm.domain.Document;
+import ru.altarix.marm.repository.DocumentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
