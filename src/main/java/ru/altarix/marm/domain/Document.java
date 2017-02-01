@@ -12,12 +12,13 @@ import java.util.Map;
 public class Document {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "document_id_seq")
+    @SequenceGenerator(name="document_id_seq", sequenceName = "document_id_seq")
     private Long id;
 
     private String status;
 
-    private Integer uptime;
+    private Long uptime;
 
     @Column(name = "ext_id")
     private String extId;
@@ -30,7 +31,7 @@ public class Document {
     @JsonSerialize(using = TimestampJsonSerializer.class)
     private Timestamp exportDate;
 
-    @Column(name = "publish_date")
+    @Column(name = "publish_date", updatable = false)
     @JsonSerialize(using = TimestampJsonSerializer.class)
     private Timestamp publishDate;
 
@@ -53,6 +54,19 @@ public class Document {
     @Type(type = "jsonb")
     private Map<String, Object> data;
 
+    @PrePersist
+    public void onCreate() {
+        uptime = System.currentTimeMillis();
+        if (publishDate == null) {
+            publishDate = new Timestamp(System.currentTimeMillis());
+        }
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        uptime = System.currentTimeMillis();
+    }
+
     public Long getId() {
         return id;
     }
@@ -69,11 +83,11 @@ public class Document {
         this.status = status;
     }
 
-    public Integer getUptime() {
+    public Long getUptime() {
         return uptime;
     }
 
-    public void setUptime(Integer uptime) {
+    public void setUptime(Long uptime) {
         this.uptime = uptime;
     }
 
