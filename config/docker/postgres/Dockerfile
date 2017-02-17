@@ -1,5 +1,5 @@
 FROM postgres:9.5
 COPY dump/pgdump.backup pgdump.backup
-POSTGRES_DB nadzor
-POSTGRES_USER postgres
-POSTGRES_PASSWORD Qwerty123
+ENV POSTGRES_DB nadzor
+ENV POSTGRES_USER postgres
+ENV POSTGRES_PASSWORD Qwerty123
