@@ -1,0 +1,28 @@
+version: "2.1"
+services:
+  box:
+    image: "172.29.23.100:5000/marm-spring-box"
+    ports:
+      - "28080:8080"
+  postgres:
+    image: "172.29.23.100:5000/marm-spring-postgres"
+    ports:
+      - "25432:5432"
+  mongo:
+    image: "172.29.23.100:5000/marm-spring-mongo"
+    ports:
+      - "27017:27017"
+
+
+
+# volumes:
+#   arbitrary-repo-name:
+#     driver_opts:
+#       type: none
+#       device: /var/log
+#       o: bind
+#   arbitrary-repo-namee:
+#     driver_opts:
+#       type: none
+#       device: /var/log
+#       o: bind
