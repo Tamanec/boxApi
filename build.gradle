@@ -20,6 +20,18 @@ jar {
     version = '0.1'
 }
 
+task copyJar(type: Copy) {
+    from 'build/libs'
+    into "config/docker/box"
+    include "*.jar"
+    dependsOn build
+}
+
+
+task collectArtifacts {
+    dependsOn build, copyJar
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
