@@ -5,8 +5,8 @@ services:
     ports:
       - "28080:8080"
     depends_on:
-      postgres
-      mongo
+      - postgres
+      - mongo
   postgres:
     image: "172.29.23.100:5000/marm-spring-postgres"
     ports:
