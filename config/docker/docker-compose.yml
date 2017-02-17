@@ -14,7 +14,7 @@ services:
   mongo:
     image: "172.29.23.100:5000/marm-spring-mongo"
     ports:
-      - "27017:27017"
+      - "27018:27017"
 
 
 
