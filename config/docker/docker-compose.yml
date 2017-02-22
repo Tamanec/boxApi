@@ -9,6 +9,7 @@ services:
       - postgres
       - mongo
   postgres:
+    hostname: marm-spring-postgres
     image: "172.29.23.100:5000/marm-spring-postgres"
     container_name: marm-spring-postgres
     ports:
