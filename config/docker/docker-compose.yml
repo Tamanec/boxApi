@@ -13,22 +13,27 @@ services:
     container_name: marm-spring-postgres
     ports:
       - "25432:5432"
+    volumes:
+      - "marm-data-postgres:/var/lib/postgresql/data"
+    logging:  
+      driver: json-file
+      options:
+        max-size: 100m
+        max-file: "3"
   mongo:
     container_name: marm-spring-mongo
     image: "172.29.23.100:5000/marm-spring-mongo"
     ports:
       - "27018:27017"
+    volumes:
+      - "marm-data-mongo:/data/db"
+    logging:  
+      driver: json-file
+      options:
+        max-size: 100m
+        max-file: "3"
 
 
-
-# volumes:
-#   arbitrary-repo-name:
-#     driver_opts:
-#       type: none
-#       device: /var/log
-#       o: bind
-#   arbitrary-repo-namee:
-#     driver_opts:
-#       type: none
-#       device: /var/log
-#       o: bind
+volumes:
+  marm-postgres-data: {}
+  marm-mongo-data: {}
