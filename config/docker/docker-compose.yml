@@ -9,8 +9,11 @@ services:
       - postgres
       - mongo
   postgres:
+    hostname: marm-spring-postgres
     image: "172.29.23.100:5000/marm-spring-postgres"
     container_name: marm-spring-postgres
+    volumes:
+      - marm-postgres-data:/var/lib/postgresql
     ports:
       - "25432:5432"
     volumes:
@@ -26,7 +29,7 @@ services:
     ports:
       - "27018:27017"
     volumes:
-      - "marm-data-mongo:/data/db"
+      - marm-data-mongo:/data/db
     logging:  
       driver: json-file
       options:
