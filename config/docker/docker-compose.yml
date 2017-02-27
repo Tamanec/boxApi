@@ -29,7 +29,7 @@ services:
     ports:
       - "27018:27017"
     volumes:
-      - marm-data-mongo:/data/db
+      - marm-mongo-data:/data/db
     logging:  
       driver: json-file
       options:
