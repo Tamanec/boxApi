@@ -1,8 +1,8 @@
-package ru.altarix.marm.api;
+package ru.altarix.marm.queryLanguage.response;
 
 import java.util.List;
 
-public class Response {
+public class BaseResponse {
 
     private List<Object> data;
 
@@ -10,10 +10,10 @@ public class Response {
 
     private String Message;
 
-    public Response() {
+    public BaseResponse() {
     }
 
-    public Response(List<Object> data) {
+    public BaseResponse(List<Object> data) {
         this.data = data;
     }
 

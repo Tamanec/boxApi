@@ -5,7 +5,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import ru.altarix.marm.api.FindAllRequest;
+import ru.altarix.marm.queryLanguage.request.FindAllRequest;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,12 +25,13 @@ public class Mongo {
         MongoCollection<Document> docs = db.getCollection("docs");
         List<Bson> filters = new LinkedList<>();
 
-        Object value = request.getFilters().get(0).get("value").toString();
-        Bson extIdFilter = eq("ext_id", value);
-        filters.add(extIdFilter);
+        String paramName = request.getFilters().get(0).getParamName();
+        Object value = request.getFilters().get(0).getValue();
+        Bson mongoFilter = eq(paramName, value);
+        filters.add(mongoFilter);
 
-        Bson templateFilter = eq("template", "crosswalk");
-        filters.add(templateFilter);
+        /*Bson templateFilter = eq("template", "crosswalk");
+        filters.add(templateFilter);*/
 
         Document doc = docs.find(and(filters)).first();
 
