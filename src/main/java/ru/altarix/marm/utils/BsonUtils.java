@@ -38,6 +38,11 @@ public class BsonUtils {
             } else if (parentFieldValue instanceof List) {
                 List parentValue = (List) parentFieldValue;
                 subFieldValue = parentValue.get(Integer.parseInt(subFieldName));
+            } else {
+                throw new IllegalArgumentException(
+                        "Invalid parent field type, name: " + fieldsChain[i - 1]
+                        + ", value class: " + parentFieldValue.getClass()
+                );
             }
         }
 
