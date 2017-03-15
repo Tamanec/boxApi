@@ -7,33 +7,27 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import ru.altarix.marm.queryLanguage.request.FindAllRequest;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
 
-public class Mongo {
+public class MongoDataProvider {
 
+    private FilterParser filterParser;
     private MongoDatabase db;
 
-    public Mongo(MongoDatabase db) {
+    public MongoDataProvider(MongoDatabase db, FilterParser filterParser) {
         this.db = db;
+        this.filterParser = filterParser;
     }
 
     public Document find(FindAllRequest request) {
+        List<Bson> filters = filterParser.parseFilters(request.getFilters());
+
         MongoCollection<Document> docs = db.getCollection("docs");
-        List<Bson> filters = new LinkedList<>();
 
-        String paramName = request.getFilters().get(0).getParamName();
-        Object value = request.getFilters().get(0).getValue();
-        Bson mongoFilter = eq(paramName, value);
-        filters.add(mongoFilter);
-
-        /*Bson templateFilter = eq("template", "crosswalk");
-        filters.add(templateFilter);*/
-
-        Document doc = docs.find(and(filters)).first();
+        Bson mongoFilters = filters.size() == 1 ? filters.get(0) : and(filters);
+        Document doc = docs.find(mongoFilters).first();
 
         if (doc != null) {
             ObjectId id = doc.getObjectId("_id");

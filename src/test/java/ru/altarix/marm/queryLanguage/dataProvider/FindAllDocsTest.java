@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.springframework.boot.test.context.SpringBootTest;
 import ru.altarix.marm.queryLanguage.request.FindAllRequest;
 import ru.altarix.marm.queryLanguage.request.body.Filter;
 import ru.altarix.marm.utils.BsonUtils;
@@ -27,19 +26,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(Parameterized.class)
-@SpringBootTest
 public class FindAllDocsTest {
 
     private String fieldName;
     private String operator;
     private String fieldValue;
 
-    private Mongo dataProvider;
+    private MongoDataProvider dataProvider;
 
     @Rule
     public TestWatcher watcher = new MarmTestWatcher(this.getClass().getCanonicalName());
 
-    @Parameterized.Parameters
+    @Parameterized.Parameters(name = "{index}: {0} {1} {2}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
                 {"template", "equal", "crosswalk"},
@@ -61,7 +59,7 @@ public class FindAllDocsTest {
 
         MongoClient mongo = new MongoClient(new MongoClientURI(mongoUri));
         MongoDatabase db = mongo.getDatabase("nadzor");
-        dataProvider = new Mongo(db);
+        dataProvider = new MongoDataProvider(db, new FilterParser());
     }
 
     @Before
@@ -75,6 +73,27 @@ public class FindAllDocsTest {
 
     @Test
     public void equalFilter() throws Exception {
+        FindAllRequest request = getParametrizedRequest();
+        Document doc = dataProvider.find(request);
+        checkFindResult(doc);
+    }
+
+    @Test
+    public void twoFilters() {
+        FindAllRequest request = getParametrizedRequest();
+
+        Filter statusFilter = new Filter(
+            "status",
+            "equal",
+            "imported"
+        );
+        request.addFilter(statusFilter);
+
+        Document doc = dataProvider.find(request);
+        checkFindResult(doc);
+    }
+
+    private FindAllRequest getParametrizedRequest() {
         FindAllRequest request = new FindAllRequest();
         request.setName("doc");
 
@@ -84,9 +103,10 @@ public class FindAllDocsTest {
             fieldValue
         );
         request.addFilter(templateFilter);
+        return request;
+    }
 
-        Document doc = dataProvider.find(request);
-
+    private void checkFindResult(Document doc) {
         assertNotNull("Document not found", doc);
         assertEquals(fieldValue, BsonUtils.getValue(
             doc,

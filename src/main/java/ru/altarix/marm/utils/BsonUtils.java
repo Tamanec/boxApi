@@ -33,16 +33,19 @@ public class BsonUtils {
             parentFieldValue = subFieldValue;
             String subFieldName = fieldsChain[i];
             if (parentFieldValue instanceof Document) {
-                Document parentValue = (Document) parentFieldValue;
-                subFieldValue = parentValue.get(subFieldName, subFieldClass);
-            } else if (parentFieldValue instanceof List) {
+                try {
+                    Document parentValue = (Document) parentFieldValue;
+                    subFieldValue = parentValue.get(subFieldName, subFieldClass);
+                } catch (ClassCastException e) {
+                    throw new IllegalArgumentException(
+                        "Invalid parent field type, name: " + fieldsChain[i - 1]
+                        + ", value class: " + parentFieldValue.getClass(),
+                        e
+                    );
+                }
+            } else {
                 List parentValue = (List) parentFieldValue;
                 subFieldValue = parentValue.get(Integer.parseInt(subFieldName));
-            } else {
-                throw new IllegalArgumentException(
-                        "Invalid parent field type, name: " + fieldsChain[i - 1]
-                        + ", value class: " + parentFieldValue.getClass()
-                );
             }
         }
 
