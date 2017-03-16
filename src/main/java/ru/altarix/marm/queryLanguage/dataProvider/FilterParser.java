@@ -1,5 +1,6 @@
 package ru.altarix.marm.queryLanguage.dataProvider;
 
+import antlr.StringUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import ru.altarix.marm.queryLanguage.request.body.Filter;
@@ -7,6 +8,7 @@ import ru.altarix.marm.queryLanguage.request.body.Operator;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static com.mongodb.client.model.Filters.*;
 
@@ -59,14 +61,15 @@ public class FilterParser {
                 mongoFilter = lte(filter.getParamName(), filter.getValue());
                 break;
             case REGEX:
-                String value = filter.getValue().toString();
-                if (!value.startsWith("/") && !value.endsWith("/")) {
-                    value = "/" + value + "/";
-                }
+                String value = StringUtils.stripFrontBack(
+                    filter.getValue().toString(),
+                    "/",
+                    "/");
+                Pattern regPattern = Pattern.compile(value);
 
                 Document regex = new Document("$regex", value);
                 if (!filter.getModificators().isEmpty()) {
-                    regex.append("$options", filter.getModificators());
+                    regex.append("$options", String.join("", filter.getModificators()));
                 }
 
                 mongoFilter = new Document(filter.getParamName(), regex);

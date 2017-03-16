@@ -12,16 +12,31 @@ public class FindAllRequest {
 
     private List<Filter> filters = new LinkedList<>();
 
-    public void addFilter(Filter filter) {
+    public FindAllRequest addFilter(Filter filter) {
         filters.add(filter);
+        return this;
+    }
+
+    public FindAllRequest addFilter(
+        String paramName,
+        String operator,
+        Object value
+    ) {
+        filters.add(new Filter(
+            paramName,
+            operator,
+            value
+        ));
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public FindAllRequest setName(String name) {
         this.name = name;
+        return this;
     }
 
     public List<Filter> getFilters() {

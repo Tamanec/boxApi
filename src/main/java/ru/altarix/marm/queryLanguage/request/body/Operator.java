@@ -25,11 +25,15 @@ public enum Operator {
         this.name = name;
     }
 
-    public static Operator findByName(String name) {
+    public static Operator findByName(String name) throws IllegalArgumentException {
         if (dictionary.isEmpty()) {
             for (Operator operator : Operator.values()) {
                 dictionary.put(operator.getName(), operator);
             }
+        }
+
+        if (!dictionary.containsKey(name)) {
+            throw new IllegalArgumentException("Unknown operator name: " + name);
         }
 
         return dictionary.get(name);
