@@ -42,22 +42,22 @@ public class FilterParser {
                     new Document("$in", filter.getValue())
                 );
                 break;
-            case NIN:
+            case NOT_IN:
                 mongoFilter = new Document(
                     filter.getParamName(),
                     new Document("$nin", filter.getValue())
                 );
                 break;
-            case GT:
+            case GREATER_THAN:
                 mongoFilter = gt(filter.getParamName(), filter.getValue());
                 break;
-            case GTE:
+            case GREATER_THAN_EQUAL:
                 mongoFilter = gte(filter.getParamName(), filter.getValue());
                 break;
-            case LT:
+            case LESS_THAN:
                 mongoFilter = lt(filter.getParamName(), filter.getValue());
                 break;
-            case LTE:
+            case LESS_THAN_EQUAL:
                 mongoFilter = lte(filter.getParamName(), filter.getValue());
                 break;
             case REGEX:

@@ -77,7 +77,7 @@ public class FindAllDocsTest {
         );
         request.addFilter(statusFilter);
 
-        Document doc = dataProvider.find(request);
+        Document doc = dataProvider.find(request).get(0);
 
         assertNotNull("Document not found", doc);
         assertEquals("crosswalk", JsonPath.read(doc,"$.template"));
@@ -170,7 +170,7 @@ public class FindAllDocsTest {
         FindAllRequest request = new FindAllRequest()
             .setName("doc")
             .addFilter(filter);
-        doc = dataProvider.find(request);
+        doc = dataProvider.find(request).get(0);
         assertThat(doc).isNotNull();
         assertThat((String) JsonPath.read(doc, "$.nameUpper")).contains("ХРУСТАЛЬНОГО");
     }
@@ -184,7 +184,7 @@ public class FindAllDocsTest {
         FindAllRequest request = new FindAllRequest()
             .setName("doc")
             .addFilter(filter);
-        Document doc = dataProvider.find(request);
+        Document doc = dataProvider.find(request).get(0);
         assertThat(doc).isNotNull();
         assertThat((String) JsonPath.read(doc, "$.data.ext_id")).isEqualTo("185");
     }
@@ -198,7 +198,7 @@ public class FindAllDocsTest {
         FindAllRequest request = new FindAllRequest()
             .setName("doc")
             .addFilter(filter);
-        Document doc = dataProvider.find(request);
+        Document doc = dataProvider.find(request).get(0);
         assertThat(doc).isNotNull();
         assertThat((String) JsonPath.read(doc, "$.data.ext_id")).isIn("185", "186");
     }
@@ -237,7 +237,7 @@ public class FindAllDocsTest {
                 operator,
                 fieldValue
             );
-        return dataProvider.find(request);
+        return dataProvider.find(request).get(0);
     }
 
 }

@@ -24,11 +24,11 @@ public class DataController {
 
     @RequestMapping("/data/findAll")
     public BaseResponse find(@RequestBody FindAllRequest request) {
-        Document doc = dataProvider.find(request);
+        List<Document> docs = dataProvider.find(request);
 
         List<Object> data = new LinkedList<>();
-        if (doc != null) {
-            data.add(doc);
+        if (docs != null) {
+            data.addAll(docs);
         }
 
         return new BaseResponse(data);
