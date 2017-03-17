@@ -26,11 +26,6 @@ public class DataController {
     public BaseResponse find(@RequestBody FindAllRequest request) {
         List<Document> docs = dataProvider.find(request);
 
-        List<Object> data = new LinkedList<>();
-        if (docs != null) {
-            data.addAll(docs);
-        }
-
-        return new BaseResponse(data);
+        return new BaseResponse().addAllDocuments(docs);
     }
 }

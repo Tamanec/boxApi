@@ -1,10 +1,13 @@
 package ru.altarix.marm.queryLanguage.response;
 
+import org.bson.Document;
+
+import java.util.LinkedList;
 import java.util.List;
 
 public class BaseResponse {
 
-    private List<Object> data;
+    private List<Document> data = new LinkedList<>();
 
     private int code = 200;
 
@@ -13,15 +16,31 @@ public class BaseResponse {
     public BaseResponse() {
     }
 
-    public BaseResponse(List<Object> data) {
+    public BaseResponse(List<Document> data) {
         this.data = data;
     }
 
-    public List<Object> getData() {
+    public BaseResponse addAllDocuments(List<Document> docs) {
+        if (docs != null) {
+            data.addAll(docs);
+        }
+
+        return this;
+    }
+
+    public BaseResponse addDocument(Document doc) {
+        if (doc != null) {
+            data.add(doc);
+        }
+
+        return this;
+    }
+
+    public List<Document> getData() {
         return data;
     }
 
-    public void setData(List<Object> data) {
+    public void setData(List<Document> data) {
         this.data = data;
     }
 
