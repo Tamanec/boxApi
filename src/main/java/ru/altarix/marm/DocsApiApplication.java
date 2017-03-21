@@ -11,9 +11,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import ru.altarix.marm.queryLanguage.dataProvider.FilterParser;
 import ru.altarix.marm.queryLanguage.dataProvider.MongoDataProvider;
 
+import javax.servlet.Filter;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -50,5 +52,16 @@ public class DocsApiApplication {
 	public MongoDataProvider mongoDataProvider() throws IOException {
 	    return new MongoDataProvider(mongoDatabase(), filterParser());
     }
+
+    @Bean
+	public Filter logRequestFilter() {
+		CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
+		filter.setIncludeClientInfo(true);
+		filter.setIncludeHeaders(true);
+		filter.setIncludeQueryString(true);
+		filter.setIncludePayload(true);
+		filter.setMaxPayloadLength(5120);
+		return filter;
+	}
 
 }

@@ -177,10 +177,21 @@ public class FindAllDocsTest {
 
     @Test
     public void andFilter() {
+        LinkedHashMap<String, Object> firstFilter = new LinkedHashMap<>();
+        firstFilter.put("paramName", "template");
+        firstFilter.put("operator", "equal");
+        firstFilter.put("value", "crosswalk");
+
+        LinkedHashMap<String, Object> secondFilter = new LinkedHashMap<>();
+        secondFilter.put("paramName", "data.ext_id");
+        secondFilter.put("operator", "equal");
+        secondFilter.put("value", "185");
+
         Filter filter = new Filter("and", Arrays.asList(
-            new Filter("template", "equal", "crosswalk"),
-            new Filter("data.ext_id", "equal", "185")
+            firstFilter,
+            secondFilter
         ));
+
         FindAllRequest request = new FindAllRequest()
             .setName("doc")
             .addFilter(filter);
@@ -191,9 +202,19 @@ public class FindAllDocsTest {
 
     @Test
     public void orFilter() {
+        LinkedHashMap<String, Object> firstFilter = new LinkedHashMap<>();
+        firstFilter.put("paramName", "data.ext_id");
+        firstFilter.put("operator", "equal");
+        firstFilter.put("value", "185");
+
+        LinkedHashMap<String, Object> secondFilter = new LinkedHashMap<>();
+        secondFilter.put("paramName", "data.ext_id");
+        secondFilter.put("operator", "equal");
+        secondFilter.put("value", "186");
+
         Filter filter = new Filter("or", Arrays.asList(
-            new Filter("data.ext_id", "equal", "185"),
-            new Filter("data.ext_id", "equal", "186")
+            firstFilter,
+            secondFilter
         ));
         FindAllRequest request = new FindAllRequest()
             .setName("doc")
