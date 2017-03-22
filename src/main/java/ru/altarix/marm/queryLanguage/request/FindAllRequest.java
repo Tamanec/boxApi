@@ -12,6 +12,8 @@ public class FindAllRequest {
 
     private List<Filter> filters = new LinkedList<>();
 
+    private int limit = 0;
+
     public FindAllRequest addFilter(Filter filter) {
         filters.add(filter);
         return this;
@@ -45,5 +47,14 @@ public class FindAllRequest {
 
     public void setFilters(List<Filter> filters) {
         this.filters = filters;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public FindAllRequest setLimit(int limit) {
+        this.limit = limit;
+        return this;
     }
 }

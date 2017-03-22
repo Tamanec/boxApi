@@ -240,6 +240,22 @@ public class FindAllDocsTest {
         Document doc = getDocument("template", "someUnknownOp", "zxc");
     }
 
+    @Test
+    public void limit() {
+        FindAllRequest request = new FindAllRequest()
+            .setName("doc")
+            .addFilter(
+                "template",
+                "equal",
+                "crosswalk"
+            )
+            .setLimit(2);
+        List<Document> docs = dataProvider.find(request);
+
+        assertThat(docs).isNotNull();
+        assertThat(docs.size()).isEqualTo(2);
+    }
+
     private void checkEqualFilter(String fieldName, String fieldValue, String jsonPath) {
         logger.info("Test 'equalFilter': " + fieldName + " equal " + fieldValue);
 

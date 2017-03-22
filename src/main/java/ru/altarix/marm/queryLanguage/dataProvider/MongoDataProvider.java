@@ -1,6 +1,7 @@
 package ru.altarix.marm.queryLanguage.dataProvider;
 
 import com.mongodb.Block;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -25,18 +26,21 @@ public class MongoDataProvider {
 
     public List<Document> find(FindAllRequest request) {
         List<Bson> filters = filterParser.parseFilters(request.getFilters());
+        Bson mongoFilters = filters.size() == 1 ? filters.get(0) : and(filters);
 
         MongoCollection<Document> docs = db.getCollection("docs");
-
-        Bson mongoFilters = filters.size() == 1 ? filters.get(0) : and(filters);
         List<Document> result = new LinkedList<>();
-        docs.find(mongoFilters).forEach((Block<Document>) doc -> {
-            ObjectId id = doc.getObjectId("_id");
-            doc.append("id", id.toString());
-            doc.remove("_id");
 
-            result.add(doc);
-        });
+        docs
+            .find(mongoFilters)
+            .limit(request.getLimit())
+            .forEach((Block<Document>) doc -> {
+                ObjectId id = doc.getObjectId("_id");
+                doc.append("id", id.toString());
+                doc.remove("_id");
+
+                result.add(doc);
+            });
 
         return result;
     }
