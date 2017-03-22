@@ -256,6 +256,48 @@ public class FindAllDocsTest {
         assertThat(docs.size()).isEqualTo(2);
     }
 
+    @Test
+    public void sortAsc() {
+        FindAllRequest request = new FindAllRequest()
+            .setName("doc")
+            .addFilter(
+                "template",
+                "equal",
+                "crosswalk"
+            )
+            .addSort("uptime", 1);
+        List<Document> docs = dataProvider.find(request);
+
+        assertThat(docs).isNotNull();
+
+        Long first = JsonPath.read(docs.get(0), "$.uptime");
+        Long second = JsonPath.read(docs.get(1), "$.uptime");
+        logger.info("first=" + first + ", second=" + second + ", delta=" + (first - second));
+
+        assertThat(first).isLessThanOrEqualTo(second);
+    }
+
+    @Test
+    public void sortDesc() {
+        FindAllRequest request = new FindAllRequest()
+            .setName("doc")
+            .addFilter(
+                "template",
+                "equal",
+                "crosswalk"
+            )
+            .addSort("data.ext_id", -1);
+        List<Document> docs = dataProvider.find(request);
+
+        assertThat(docs).isNotNull();
+
+        Long first = Long.parseLong(JsonPath.read(docs.get(0), "$.data.ext_id"));
+        Long second = Long.parseLong(JsonPath.read(docs.get(1), "$.data.ext_id"));
+        logger.info("first=" + first + ", second=" + second + ", delta=" + (first - second));
+
+        assertThat(first).isGreaterThanOrEqualTo(second);
+    }
+
     private void checkEqualFilter(String fieldName, String fieldValue, String jsonPath) {
         logger.info("Test 'equalFilter': " + fieldName + " equal " + fieldValue);
 

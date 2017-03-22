@@ -4,13 +4,16 @@ import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Sorts;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import ru.altarix.marm.queryLanguage.request.FindAllRequest;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static com.mongodb.client.model.Filters.and;
 
@@ -31,10 +34,20 @@ public class MongoDataProvider {
         MongoCollection<Document> docs = db.getCollection("docs");
         List<Document> result = new LinkedList<>();
 
-        docs
+        FindIterable<Document> cursor = docs
             .find(mongoFilters)
-            .limit(request.getLimit())
-            .forEach((Block<Document>) doc -> {
+            .limit(request.getLimit());
+
+        if (request.getSort().size() != 0) {
+            Document orderBy = new Document();
+            for (Map.Entry<String, Integer> entry : request.getSort().entrySet()) {
+                orderBy.append(entry.getKey(), entry.getValue());
+            }
+
+            cursor.sort(orderBy);
+        }
+
+        cursor.forEach((Block<Document>) doc -> {
                 ObjectId id = doc.getObjectId("_id");
                 doc.append("id", id.toString());
                 doc.remove("_id");
