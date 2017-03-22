@@ -19,3 +19,4 @@
 //LOCAL_DUMP_PATH="${WORKSPACE}/config/docker/postgres/dump/pgdump.backup"
 //
 //docker exec -i "${DOCKER_DB_NAME}" pg_restore -C --clean --no-acl --no-owner -U "${DB_USER}" -d "${DB_HOSTNAME}" < "${LOCAL_DUMP_PATH}"
+
