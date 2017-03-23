@@ -34,7 +34,8 @@ public class MongoDataProvider {
 
         FindIterable<Document> cursor = docs
             .find(mongoFilters)
-            .limit(request.getLimit());
+            .limit(request.getLimit())
+            .skip(request.getOffset());
 
         if (request.getSort().size() != 0) {
             Document orderBy = new Document();

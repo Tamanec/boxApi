@@ -315,6 +315,23 @@ public class FindAllDocsTest {
         assertThat(doc).doesNotContainKeys("id", "data");
     }
 
+    @Test
+    public void offset() {
+        FindAllRequest request = new FindAllRequest()
+            .setName("doc")
+            .addFilter(
+                "ext_id",
+                "gte",
+                "185"
+            )
+            .addSort("ext_id", 1)
+            .setOffset(10);
+        Document doc = dataProvider.find(request).get(0);
+
+        assertThat(doc).isNotNull();
+        assertThat((String) JsonPath.read(doc, "$.ext_id")).isNotEqualTo("185");
+    }
+
     private void checkEqualFilter(String fieldName, String fieldValue, String jsonPath) {
         logger.info("Test 'equalFilter': " + fieldName + " equal " + fieldValue);
 

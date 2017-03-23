@@ -19,6 +19,8 @@ public class FindAllRequest {
 
     private List<String> fields = new LinkedList<>();
 
+    private int offset = 0;
+
     public FindAllRequest addFilter(Filter filter) {
         filters.add(filter);
         return this;
@@ -83,6 +85,15 @@ public class FindAllRequest {
 
     public FindAllRequest setFields(List<String> fields) {
         this.fields = fields;
+        return this;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public FindAllRequest setOffset(int offset) {
+        this.offset = offset;
         return this;
     }
 }
