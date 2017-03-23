@@ -17,6 +17,8 @@ public class FindAllRequest {
 
     private Map<String, Integer> sort = new HashMap<>();
 
+    private List<String> fields = new LinkedList<>();
+
     public FindAllRequest addFilter(Filter filter) {
         filters.add(filter);
         return this;
@@ -72,6 +74,15 @@ public class FindAllRequest {
 
     public FindAllRequest addSort(String fieldName, Integer direction) {
         sort.put(fieldName, direction);
+        return this;
+    }
+
+    public List<String> getFields() {
+        return fields;
+    }
+
+    public FindAllRequest setFields(List<String> fields) {
+        this.fields = fields;
         return this;
     }
 }

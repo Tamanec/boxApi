@@ -4,18 +4,17 @@ import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Sorts;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import ru.altarix.marm.queryLanguage.request.FindAllRequest;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Projections.*;
 
 public class MongoDataProvider {
 
@@ -32,7 +31,6 @@ public class MongoDataProvider {
         Bson mongoFilters = filters.size() == 1 ? filters.get(0) : and(filters);
 
         MongoCollection<Document> docs = db.getCollection("docs");
-        List<Document> result = new LinkedList<>();
 
         FindIterable<Document> cursor = docs
             .find(mongoFilters)
@@ -47,10 +45,23 @@ public class MongoDataProvider {
             cursor.sort(orderBy);
         }
 
+        if (request.getFields().size() != 0) {
+            List<Bson> projections = new LinkedList<>();
+            projections.add(include(request.getFields()));
+            if (!request.getFields().contains("id")) {
+                projections.add(excludeId());
+            }
+
+            cursor.projection(fields(projections));
+        }
+
+        List<Document> result = new LinkedList<>();
         cursor.forEach((Block<Document>) doc -> {
-                ObjectId id = doc.getObjectId("_id");
-                doc.append("id", id.toString());
-                doc.remove("_id");
+                if (doc.containsKey("_id")) {
+                    ObjectId id = doc.getObjectId("_id");
+                    doc.append("id", id.toString());
+                    doc.remove("_id");
+                }
 
                 result.add(doc);
             });

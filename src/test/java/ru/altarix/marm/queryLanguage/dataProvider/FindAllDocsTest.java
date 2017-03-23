@@ -298,6 +298,23 @@ public class FindAllDocsTest {
         assertThat(first).isGreaterThanOrEqualTo(second);
     }
 
+    @Test
+    public void projection() {
+        FindAllRequest request = new FindAllRequest()
+            .setName("doc")
+            .addFilter(
+                "template",
+                "equal",
+                "crosswalk"
+            )
+            .setFields(Arrays.asList("template", "ext_id", "uptime"));
+        Document doc = dataProvider.find(request).get(0);
+
+        assertThat(doc).isNotNull();
+        assertThat(doc).containsKeys("template", "ext_id", "uptime");
+        assertThat(doc).doesNotContainKeys("id", "data");
+    }
+
     private void checkEqualFilter(String fieldName, String fieldValue, String jsonPath) {
         logger.info("Test 'equalFilter': " + fieldName + " equal " + fieldValue);
 
