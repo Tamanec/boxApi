@@ -32,32 +32,21 @@ public class MongoDataProvider {
 
         MongoCollection<Document> docs = db.getCollection("docs");
 
-        FindIterable<Document> cursor = docs
-            .find(mongoFilters)
-            .limit(request.getLimit())
-            .skip(request.getOffset());
+        FindIterable<Document> query = getDocuments(
+            request.getLimit(),
+            request.getOffset(),
+            mongoFilters,
+            docs
+        );
+        addSort(request, query);
+        addProjection(request, query);
 
-        if (request.getSort().size() != 0) {
-            Document orderBy = new Document();
-            for (Map.Entry<String, Integer> entry : request.getSort().entrySet()) {
-                orderBy.append(entry.getKey(), entry.getValue());
-            }
+        return execute(query);
+    }
 
-            cursor.sort(orderBy);
-        }
-
-        if (request.getFields().size() != 0) {
-            List<Bson> projections = new LinkedList<>();
-            projections.add(include(request.getFields()));
-            if (!request.getFields().contains("id")) {
-                projections.add(excludeId());
-            }
-
-            cursor.projection(fields(projections));
-        }
-
+    private List<Document> execute(FindIterable<Document> query) {
         List<Document> result = new LinkedList<>();
-        cursor.forEach((Block<Document>) doc -> {
+        query.forEach((Block<Document>) doc -> {
                 if (doc.containsKey("_id")) {
                     ObjectId id = doc.getObjectId("_id");
                     doc.append("id", id.toString());
@@ -66,8 +55,42 @@ public class MongoDataProvider {
 
                 result.add(doc);
             });
-
         return result;
+    }
+
+    private void addProjection(FindAllRequest request, FindIterable<Document> query) {
+        if (request.hasProjection()) {
+            List<Bson> projections = new LinkedList<>();
+            projections.add(include(request.getFields()));
+            if (!request.getFields().contains("id")) {
+                projections.add(excludeId());
+            }
+
+            query.projection(fields(projections));
+        }
+    }
+
+    private void addSort(FindAllRequest request, FindIterable<Document> query) {
+        if (request.hasSort()) {
+            Document orderBy = new Document();
+            for (Map.Entry<String, Integer> entry : request.getSort().entrySet()) {
+                orderBy.append(entry.getKey(), entry.getValue());
+            }
+
+            query.sort(orderBy);
+        }
+    }
+
+    private FindIterable<Document> getDocuments(
+        int limit,
+        int offset,
+        Bson mongoFilters,
+        MongoCollection<Document> docs
+    ) {
+        return docs
+                .find(mongoFilters)
+                .limit(limit)
+                .skip(offset);
     }
 
 }

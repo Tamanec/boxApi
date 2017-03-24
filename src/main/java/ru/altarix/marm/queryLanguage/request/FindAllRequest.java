@@ -79,6 +79,10 @@ public class FindAllRequest {
         return this;
     }
 
+    public Boolean hasSort() {
+        return sort.size() != 0;
+    }
+
     public List<String> getFields() {
         return fields;
     }
@@ -86,6 +90,10 @@ public class FindAllRequest {
     public FindAllRequest setFields(List<String> fields) {
         this.fields = fields;
         return this;
+    }
+
+    public Boolean hasProjection() {
+        return fields.size() != 0;
     }
 
     public int getOffset() {
