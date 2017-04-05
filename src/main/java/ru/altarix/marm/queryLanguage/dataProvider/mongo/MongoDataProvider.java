@@ -1,4 +1,4 @@
-package ru.altarix.marm.queryLanguage.dataProvider;
+package ru.altarix.marm.queryLanguage.dataProvider.mongo;
 
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
@@ -7,6 +7,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import ru.altarix.marm.queryLanguage.dataProvider.FilterParser;
 import ru.altarix.marm.queryLanguage.request.FindAllRequest;
 
 import java.util.LinkedList;
@@ -18,10 +19,10 @@ import static com.mongodb.client.model.Projections.*;
 
 public class MongoDataProvider {
 
-    private FilterParser filterParser;
+    private FilterParser<Bson> filterParser;
     private MongoDatabase db;
 
-    public MongoDataProvider(MongoDatabase db, FilterParser filterParser) {
+    public MongoDataProvider(MongoDatabase db, FilterParser<Bson> filterParser) {
         this.db = db;
         this.filterParser = filterParser;
     }

@@ -1,36 +1,32 @@
-package ru.altarix.marm.queryLanguage.dataProvider;
+package ru.altarix.marm.queryLanguage.dataProvider.mongo;
 
 import com.jayway.jsonpath.JsonPath;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.client.MongoDatabase;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.bson.Document;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import ru.altarix.marm.queryLanguage.request.FindAllRequest;
 import ru.altarix.marm.queryLanguage.request.body.Filter;
 import ru.altarix.marm.utils.MarmTestWatcher;
 
-import javax.print.Doc;
-import java.io.File;
-import java.io.FileReader;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
 
-import static org.assertj.core.api.Assertions.anyOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 
-@RunWith(JUnit4.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class FindAllDocsTest {
 
+    @Autowired
     private MongoDataProvider dataProvider;
 
     private Logger logger;
@@ -40,15 +36,6 @@ public class FindAllDocsTest {
 
     public FindAllDocsTest() throws Exception {
         logger = LogManager.getLogger(this.getClass().getCanonicalName());
-
-        // Готовим подключение к монге
-        Properties appProperties = new Properties();
-        appProperties.load(new FileReader(new File("src/main/resources/application.properties")));
-        String mongoUri = appProperties.getProperty("spring.data.mongodb.uri");
-
-        MongoClient mongo = new MongoClient(new MongoClientURI(mongoUri));
-        MongoDatabase db = mongo.getDatabase("nadzor");
-        dataProvider = new MongoDataProvider(db, new FilterParser());
     }
 
     @Test

@@ -48,6 +48,8 @@ dependencies {
     compile 'org.mongodb:mongodb-driver:3.4.2'
     compile 'org.postgresql:postgresql:9.4.1212'
 
+    compile 'org.apache.commons:commons-dbcp2:2.1'
+
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'com.jayway.jsonpath:json-path:2.2.0'
 
