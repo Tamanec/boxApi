@@ -2,6 +2,7 @@ package ru.altarix.marm.queryLanguage.dataProvider.sql;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestWatcher;
@@ -26,6 +27,8 @@ public class FindAllReferencesTest {
 
     private Logger logger;
 
+    private FindAllRequest request;
+
     @Rule
     public TestWatcher watcher = new MarmTestWatcher(this.getClass().getCanonicalName());
 
@@ -33,24 +36,21 @@ public class FindAllReferencesTest {
         logger = LogManager.getLogger(this.getClass().getCanonicalName());
     }
 
+    @Before
+    public void initTest() {
+        request = new FindAllRequest()
+            .setName("orderType");
+    }
+
     @Test
     public void noFilters() {
-        logger.info("Test noFilters");
-
-        FindAllRequest request = new FindAllRequest()
-            .setName("orderType");
         List<Map<String, Object>> refList = dataProvider.find(request);
-
         assertThat(refList).isNotNull();
     }
 
     @Test
     public void equalFilter() {
-        logger.info("Test equalFilter");
-
-        FindAllRequest request = new FindAllRequest()
-            .setName("orderType")
-            .addFilter(
+        request.addFilter(
                 "id",
                 "equal",
                 31
@@ -60,6 +60,31 @@ public class FindAllReferencesTest {
         assertThat(refList).isNotNull();
         assertThat(refList.size()).isEqualTo(1);
         assertThat(refList.get(0).get("id")).isEqualTo(31);
+    }
+
+    @Test
+    public void twoFilters() {
+        request.addFilter(
+                "id",
+                "equal",
+                31
+            )
+            .addFilter(
+                "status",
+                "equal",
+                "actual"
+            );
+        List<Map<String, Object>> refList = dataProvider.find(request);
+        assertThat(refList).isNotNull();
+        assertThat(refList.size()).isEqualTo(1);
+        assertThat(refList.get(0).get("id")).isEqualTo(31);
+        assertThat(refList.get(0).get("status")).isEqualTo("actual");
+    }
+
+    @Test
+    public void notEqualFilter() {
+        FindAllRequest request = new FindAllRequest()
+            .setName("orderType");
     }
 
 }

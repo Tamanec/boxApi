@@ -7,11 +7,11 @@ import ru.altarix.marm.queryLanguage.request.body.Operator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SqlFilterParser implements FilterParser<String> {
+public class SqlFilterParser implements FilterParser<SqlClause> {
 
     @Override
-    public List<String> parseFilters(List<Filter> requestFilters) {
-        List<String> filters = new LinkedList<>();
+    public List<SqlClause> parseFilters(List<Filter> requestFilters) {
+        List<SqlClause> filters = new LinkedList<>();
         for (Filter filter : requestFilters) {
             filters.add(getSqlFilter(filter));
         }
@@ -19,20 +19,21 @@ public class SqlFilterParser implements FilterParser<String> {
         return filters;
     }
 
-    private String getSqlFilter(Filter filter) throws UnsupportedOperationException {
+    private SqlClause getSqlFilter(Filter filter) throws UnsupportedOperationException {
         StringBuilder sqlFilter = new StringBuilder();
+        SqlClause clause = new SqlClause();
         Operator operator = Operator.findByName(filter.getOperator());
         switch (operator) {
             case EQUAL:
-                sqlFilter.append(filter.getParamName())
-                    .append("=")
-                    .append(filter.getValue());
+                sqlFilter.append(filter.getParamName()).append("=?");
+                clause.setTemplate(sqlFilter.toString())
+                    .addValue(filter.getValue());
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown operator: " + operator.getName());
         }
 
-        return sqlFilter.toString();
+        return clause;
     }
 
 }
