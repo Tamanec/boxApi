@@ -29,6 +29,22 @@ public class SqlFilterParser implements FilterParser<SqlClause> {
                 clause.setTemplate(sqlFilter.toString())
                     .addValue(filter.getValue());
                 break;
+
+            case AND:
+                List<SqlClause> subClauses = parseFilters((List<Filter>) filter.getValue());
+
+                List<String> templates = new LinkedList<>();
+                subClauses.forEach((sqlClause -> {
+                    templates.add(sqlClause.getTemplate());
+                    clause.addAllValues(sqlClause.getValues());
+                }));
+
+                sqlFilter.append(String.join(" and ", templates));
+                sqlFilter.insert(0, "(").append(")");
+
+                clause.setTemplate(sqlFilter.toString());
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown operator: " + operator.getName());
         }

@@ -31,4 +31,9 @@ public class SqlClause {
         this.values.add(value);
         return this;
     }
+
+    public SqlClause addAllValues(List<Object> value) {
+        this.values.addAll(value);
+        return this;
+    }
 }
