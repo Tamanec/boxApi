@@ -1,5 +1,6 @@
 package ru.altarix.marm.queryLanguage.dataProvider.sql;
 
+import org.springframework.stereotype.Service;
 import ru.altarix.marm.queryLanguage.dataProvider.FilterParser;
 import ru.altarix.marm.queryLanguage.request.body.Filter;
 import ru.altarix.marm.queryLanguage.request.body.Operator;
@@ -7,6 +8,7 @@ import ru.altarix.marm.queryLanguage.request.body.Operator;
 import java.util.LinkedList;
 import java.util.List;
 
+@Service
 public class SqlFilterParser implements FilterParser<SqlClause> {
 
     @Override

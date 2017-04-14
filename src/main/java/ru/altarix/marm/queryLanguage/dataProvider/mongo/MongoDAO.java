@@ -7,6 +7,8 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import ru.altarix.marm.queryLanguage.dataProvider.FilterParser;
 import ru.altarix.marm.queryLanguage.request.FindAllRequest;
 
@@ -17,13 +19,16 @@ import java.util.Map;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Projections.*;
 
+@Repository
 public class MongoDAO {
 
     private FilterParser<Bson> filterParser;
-    private MongoDatabase db;
 
-    public MongoDAO(MongoDatabase db, FilterParser<Bson> filterParser) {
-        this.db = db;
+    private MongoDatabase docsDb;
+
+    @Autowired
+    public MongoDAO(MongoDatabase docsDb, FilterParser<Bson> filterParser) {
+        this.docsDb = docsDb;
         this.filterParser = filterParser;
     }
 
@@ -31,7 +36,7 @@ public class MongoDAO {
         List<Bson> filters = filterParser.parseFilters(request.getFilters());
         Bson mongoFilters = filters.size() == 1 ? filters.get(0) : and(filters);
 
-        MongoCollection<Document> docs = db.getCollection("docs");
+        MongoCollection<Document> docs = docsDb.getCollection("docs");
 
         FindIterable<Document> query = docs.find(mongoFilters)
             .limit(request.getLimit())

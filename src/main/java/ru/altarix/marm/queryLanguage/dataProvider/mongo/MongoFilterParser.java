@@ -3,6 +3,7 @@ package ru.altarix.marm.queryLanguage.dataProvider.mongo;
 import antlr.StringUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.springframework.stereotype.Service;
 import ru.altarix.marm.queryLanguage.dataProvider.FilterParser;
 import ru.altarix.marm.queryLanguage.request.body.Filter;
 import ru.altarix.marm.queryLanguage.request.body.Operator;
@@ -13,6 +14,7 @@ import java.util.regex.Pattern;
 
 import static com.mongodb.client.model.Filters.*;
 
+@Service
 public class MongoFilterParser implements FilterParser<Bson> {
 
     public List<Bson> parseFilters(List<Filter> requestFilters) {

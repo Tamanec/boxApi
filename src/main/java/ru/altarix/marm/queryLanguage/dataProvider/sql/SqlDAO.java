@@ -4,8 +4,10 @@ import com.jayway.jsonpath.JsonPath;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.stereotype.Repository;
 import ru.altarix.marm.queryLanguage.dataProvider.FilterParser;
 import ru.altarix.marm.queryLanguage.request.FindAllRequest;
 
@@ -19,6 +21,7 @@ import java.sql.Types;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
+@Repository
 public class SqlDAO {
 
     private MongoDatabase templatesDb;
@@ -27,6 +30,7 @@ public class SqlDAO {
 
     private FilterParser<SqlClause> filterParser;
 
+    @Autowired
     public SqlDAO(MongoDatabase templatesDb, JdbcTemplate pgClient, FilterParser<SqlClause> filterParser) {
         this.templatesDb = templatesDb;
         this.pgClient = pgClient;
