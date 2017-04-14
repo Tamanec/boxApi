@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FindAllReferencesTest {
 
     @Autowired
-    private SqlDataProvider dataProvider;
+    private SqlDAO dataProvider;
 
     private Logger logger;
 

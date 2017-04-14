@@ -17,12 +17,12 @@ import java.util.Map;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Projections.*;
 
-public class MongoDataProvider {
+public class MongoDAO {
 
     private FilterParser<Bson> filterParser;
     private MongoDatabase db;
 
-    public MongoDataProvider(MongoDatabase db, FilterParser<Bson> filterParser) {
+    public MongoDAO(MongoDatabase db, FilterParser<Bson> filterParser) {
         this.db = db;
         this.filterParser = filterParser;
     }
@@ -33,12 +33,10 @@ public class MongoDataProvider {
 
         MongoCollection<Document> docs = db.getCollection("docs");
 
-        FindIterable<Document> query = getDocuments(
-            request.getLimit(),
-            request.getOffset(),
-            mongoFilters,
-            docs
-        );
+        FindIterable<Document> query = docs.find(mongoFilters)
+            .limit(request.getLimit())
+            .skip(request.getOffset());
+
         addSort(request, query);
         addProjection(request, query);
 

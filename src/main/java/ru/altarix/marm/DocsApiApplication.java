@@ -10,20 +10,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import ru.altarix.marm.queryLanguage.dataProvider.mongo.MongoFilterParser;
-import ru.altarix.marm.queryLanguage.dataProvider.mongo.MongoDataProvider;
-import ru.altarix.marm.queryLanguage.dataProvider.sql.SqlDataProvider;
+import ru.altarix.marm.queryLanguage.dataProvider.mongo.MongoDAO;
+import ru.altarix.marm.queryLanguage.dataProvider.sql.SqlDAO;
 import ru.altarix.marm.queryLanguage.dataProvider.sql.SqlFilterParser;
 
 import javax.servlet.Filter;
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.util.Properties;
 
 @SpringBootApplication
 @PropertySource("classpath:application.properties")
@@ -58,8 +53,8 @@ public class DocsApiApplication {
     }
 
 	@Bean
-	public MongoDataProvider mongoDataProvider() {
-	    return new MongoDataProvider(docsDb(), mongoFilterParser());
+	public MongoDAO mongoDAO() {
+	    return new MongoDAO(docsDb(), mongoFilterParser());
     }
 
     @Bean
@@ -68,8 +63,8 @@ public class DocsApiApplication {
     }
 
 	@Bean
-	public SqlDataProvider sqlDataProvider() {
-		return new SqlDataProvider(templatesDb(), jdbcTemplate(), sqlFilterParser());
+	public SqlDAO sqlDAO() {
+		return new SqlDAO(templatesDb(), jdbcTemplate(), sqlFilterParser());
 	}
 
 	@Bean

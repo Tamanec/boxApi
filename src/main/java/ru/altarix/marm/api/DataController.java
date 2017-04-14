@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.altarix.marm.queryLanguage.dataProvider.mongo.MongoDataProvider;
+import ru.altarix.marm.queryLanguage.dataProvider.mongo.MongoDAO;
 import ru.altarix.marm.queryLanguage.request.FindAllRequest;
 import ru.altarix.marm.queryLanguage.response.BaseResponse;
 
@@ -14,10 +14,10 @@ import java.util.List;
 @RestController
 public class DataController {
 
-    private MongoDataProvider dataProvider;
+    private MongoDAO dataProvider;
 
     @Autowired
-    public DataController(MongoDataProvider dataProvider) {
+    public DataController(MongoDAO dataProvider) {
         this.dataProvider = dataProvider;
     }
 

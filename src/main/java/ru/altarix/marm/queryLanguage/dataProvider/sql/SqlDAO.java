@@ -19,7 +19,7 @@ import java.sql.Types;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
-public class SqlDataProvider {
+public class SqlDAO {
 
     private MongoDatabase templatesDb;
 
@@ -27,7 +27,7 @@ public class SqlDataProvider {
 
     private FilterParser<SqlClause> filterParser;
 
-    public SqlDataProvider(MongoDatabase templatesDb, JdbcTemplate pgClient, FilterParser<SqlClause> filterParser) {
+    public SqlDAO(MongoDatabase templatesDb, JdbcTemplate pgClient, FilterParser<SqlClause> filterParser) {
         this.templatesDb = templatesDb;
         this.pgClient = pgClient;
         this.filterParser = filterParser;

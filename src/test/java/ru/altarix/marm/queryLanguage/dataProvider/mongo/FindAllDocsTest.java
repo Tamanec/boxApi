@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 public class FindAllDocsTest {
 
     @Autowired
-    private MongoDataProvider dataProvider;
+    private MongoDAO dataProvider;
 
     private Logger logger;
 
