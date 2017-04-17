@@ -39,26 +39,18 @@ public class SqlDAO {
 
     public List<Map<String, Object>> find(FindAllRequest request) {
         List<SqlClause> filters = filterParser.parseFilters(request.getFilters());
-        String clause = "";
-        List<Object> values = new LinkedList<>();
-        if (filters.size() != 0) {
-            List<String> templates = new LinkedList<>();
-            filters.forEach(sqlClause -> {
-                templates.add(sqlClause.getTemplate());
-                values.addAll(sqlClause.getValues());
-            });
 
-            String sqlFilters = templates.size() == 1 ? templates.get(0) : String.join(" and ", templates);
-            clause = " where " + sqlFilters;
-        }
+        StringBuilder query = new StringBuilder("select ")
+            .append(getProjection(request))
+            .append(" from ")
+            .append(getTableName(request))
+            .append(getClauseTemplate(filters))
+            .append(getSort(request));
 
-        String tableName = getTableName(request);
-
-        StringBuilder query = new StringBuilder("select * from ")
-            .append(tableName)
-            .append(clause);
-
-        return pgClient.queryForList(query.toString(), values.toArray());
+        return pgClient.queryForList(
+            query.toString(),
+            getClauseValues(filters).toArray()
+        );
     }
 
     private String getTableName(FindAllRequest request) {
@@ -71,6 +63,46 @@ public class SqlDAO {
             ))
             .first();
         return JsonPath.read(reference, "$.source.name");
+    }
+
+    private String getProjection(FindAllRequest request) {
+        return request.hasProjection() ? String.join(",", request.getFields()) : "*";
+    }
+
+    private String getClauseTemplate(List<SqlClause> filters) {
+        if (filters.size() == 0) {
+            return "";
+        }
+
+        List<String> templates = new LinkedList<>();
+        filters.forEach(sqlClause -> {
+            templates.add(sqlClause.getTemplate());
+        });
+        String sqlFilters = templates.size() == 1 ? templates.get(0) : String.join(" and ", templates);
+
+        return " where " + sqlFilters;
+    }
+
+    private List<Object> getClauseValues(List<SqlClause> filters) {
+        List<Object> values = new LinkedList<>();
+        if (filters.size() != 0) {
+            filters.forEach(sqlClause -> values.addAll(sqlClause.getValues()));
+        }
+
+        return values;
+    }
+
+    private String getSort(FindAllRequest request) {
+        if (!request.hasSort()) {
+            return "";
+        }
+
+        List<String> fields = new LinkedList<>();
+        request.getSort().forEach((field, direction) -> fields
+            .add(field + (direction > 0 ? " ASC" : " DESC"))
+        );
+
+        return " order by " + String.join(",", fields);
     }
 
 }
