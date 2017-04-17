@@ -3,7 +3,6 @@ package ru.altarix.marm.queryLanguage.dataProvider.mongo;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -24,11 +23,11 @@ public class MongoDAO {
 
     private FilterParser<Bson> filterParser;
 
-    private MongoDatabase docsDb;
+    private MongoCollection<Document> docsCollection;
 
     @Autowired
-    public MongoDAO(MongoDatabase docsDb, FilterParser<Bson> filterParser) {
-        this.docsDb = docsDb;
+    public MongoDAO(MongoCollection<Document> docsCollection, FilterParser<Bson> filterParser) {
+        this.docsCollection = docsCollection;
         this.filterParser = filterParser;
     }
 
@@ -36,9 +35,7 @@ public class MongoDAO {
         List<Bson> filters = filterParser.parseFilters(request.getFilters());
         Bson mongoFilters = filters.size() == 1 ? filters.get(0) : and(filters);
 
-        MongoCollection<Document> docs = docsDb.getCollection("docs");
-
-        FindIterable<Document> query = docs.find(mongoFilters)
+        FindIterable<Document> query = docsCollection.find(mongoFilters)
             .limit(request.getLimit())
             .skip(request.getOffset());
 
