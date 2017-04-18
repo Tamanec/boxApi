@@ -69,8 +69,8 @@ public class SqlFilterParser implements FilterParser<SqlClause> {
                         )
                     ))
                     .append(")");
-                clause.setTemplate(sqlFilter.toString()).
-                    addAllValues((List<Object>) filter.getValue());
+                clause.setTemplate(sqlFilter.toString())
+                    .addAllValues((List<Object>) filter.getValue());
                 break;
 
             case REGEX:

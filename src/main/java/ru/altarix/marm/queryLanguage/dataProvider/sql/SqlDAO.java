@@ -38,9 +38,11 @@ public class SqlDAO {
         StringBuilder query = new StringBuilder("select ")
             .append(getProjection(request))
             .append(" from ")
-            .append(getTableName(request))
+            .append(getTableName(request.getName()))
             .append(getClauseTemplate(filters))
-            .append(getSort(request));
+            .append(getSort(request))
+            .append(getLimit(request))
+            .append(getOffset(request));
 
         return pgClient.queryForList(
             query.toString(),
@@ -48,12 +50,12 @@ public class SqlDAO {
         );
     }
 
-    private String getTableName(FindAllRequest request) {
+    private String getTableName(String referenceName) {
         Document reference = templatesCollection.find(
             and(
                 eq("class", "reference"),
                 eq("source.type", "sql"),
-                eq("name", request.getName())
+                eq("name", referenceName)
             ))
             .first();
         return JsonPath.read(reference, "$.source.name");
@@ -61,6 +63,27 @@ public class SqlDAO {
 
     private String getProjection(FindAllRequest request) {
         return request.hasProjection() ? String.join(",", request.getFields()) : "*";
+    }
+
+    private String getSort(FindAllRequest request) {
+        if (!request.hasSort()) {
+            return "";
+        }
+
+        List<String> fields = new LinkedList<>();
+        request.getSort().forEach((field, direction) -> fields
+            .add(field + (direction > 0 ? " ASC" : " DESC"))
+        );
+
+        return " order by " + String.join(",", fields);
+    }
+
+    private String getLimit(FindAllRequest request) {
+        return (request.getLimit() != 0) ? " limit " + request.getLimit() : "";
+    }
+
+    private String getOffset(FindAllRequest request) {
+        return (request.getOffset() != 0) ? " offset " + request.getOffset() : "";
     }
 
     private String getClauseTemplate(List<SqlClause> filters) {
@@ -84,19 +107,6 @@ public class SqlDAO {
         }
 
         return values;
-    }
-
-    private String getSort(FindAllRequest request) {
-        if (!request.hasSort()) {
-            return "";
-        }
-
-        List<String> fields = new LinkedList<>();
-        request.getSort().forEach((field, direction) -> fields
-            .add(field + (direction > 0 ? " ASC" : " DESC"))
-        );
-
-        return " order by " + String.join(",", fields);
     }
 
 }

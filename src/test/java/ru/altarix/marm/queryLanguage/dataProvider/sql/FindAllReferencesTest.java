@@ -295,4 +295,22 @@ public class FindAllReferencesTest {
         assertThat(ref).doesNotContainKeys("id", "status", "ext_parent_id");
     }
 
+    @Test
+    public void limit() {
+        request.setLimit(10);
+        List<Map<String, Object>> refList = dataProvider.find(request);
+
+        assertThat(refList).isNotNull();
+        assertThat(refList.size()).isEqualTo(10);
+    }
+
+    @Test
+    public void offset() {
+        request.addSort("id", 1).setOffset(10);
+        List<Map<String, Object>> refList = dataProvider.find(request);
+
+        assertThat(refList).isNotNull();
+        refList.forEach(element -> assertThat((Integer) element.get("id")).isGreaterThan(10));
+    }
+
 }
