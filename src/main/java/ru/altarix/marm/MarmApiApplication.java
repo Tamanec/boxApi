@@ -6,10 +6,10 @@ import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
 @PropertySource("classpath:application.properties")
-public class DocsApiApplication {
+public class MarmApiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DocsApiApplication.class, args);
+		SpringApplication.run(MarmApiApplication.class, args);
 	}
 
 }

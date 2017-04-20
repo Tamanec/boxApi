@@ -12,7 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.altarix.marm.queryLanguage.request.FindRequest;
 import ru.altarix.marm.queryLanguage.request.body.Filter;
-import ru.altarix.marm.queryLanguage.service.sql.ReferenceCrudService;
+import ru.altarix.marm.queryLanguage.service.CrudService;
+import ru.altarix.marm.queryLanguage.service.factory.CrudServiceFactory;
+import ru.altarix.marm.queryLanguage.service.sql.SqlCrudService;
 import ru.altarix.marm.utils.MarmTestWatcher;
 
 import java.util.*;
@@ -25,7 +27,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FindAllReferencesTest {
 
     @Autowired
-    private ReferenceCrudService dataProvider;
+    private CrudServiceFactory crudServiceFactory;
+
+    private CrudService<Map<String, Object>> crudService;
 
     private Logger logger;
 
@@ -35,24 +39,27 @@ public class FindAllReferencesTest {
     public TestWatcher watcher = new MarmTestWatcher(this.getClass().getCanonicalName());
 
     public FindAllReferencesTest() throws Exception {
-        logger = LogManager.getLogger(this.getClass().getCanonicalName());
+
     }
 
     @Before
     public void initTest() {
+        logger = LogManager.getLogger(this.getClass().getCanonicalName());
+
         request = new FindRequest().setName("orderType");
+        crudService = crudServiceFactory.create(request);
     }
 
     @Test
     public void noFilters() {
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
         assertThat(refList).isNotNull();
     }
 
     @Test
     public void equalFilter() {
         request.addFilter("id", "equal", 31);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         assertThat(refList.size()).isEqualTo(1);
@@ -71,7 +78,7 @@ public class FindAllReferencesTest {
                 "equal",
                 "actual"
             );
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
         assertThat(refList).isNotNull();
         assertThat(refList.size()).isEqualTo(1);
         assertThat(refList.get(0).get("id")).isEqualTo(31);
@@ -81,7 +88,7 @@ public class FindAllReferencesTest {
     @Test
     public void notEqualFilter() {
         request.addFilter("id", "ne", 31);
-        Map<String, Object> ref = dataProvider.find(request).get(0);
+        Map<String, Object> ref = crudService.find(request).get(0);
 
         assertThat(ref).isNotNull();
         assertThat(ref.get("id")).isNotEqualTo(31);
@@ -95,7 +102,7 @@ public class FindAllReferencesTest {
             Arrays.asList(30, 31)
         );
 
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         assertThat(refList.size()).isEqualTo(2);
@@ -111,7 +118,7 @@ public class FindAllReferencesTest {
             Arrays.asList(30, 31)
         );
 
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
         assertThat(refList).isNotNull();
 
         final List<Integer> ids = new LinkedList<>();
@@ -125,7 +132,7 @@ public class FindAllReferencesTest {
     @Test
     public void greaterThenFilter() {
         request.addFilter("id", "gt", 30);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         assertThat((Integer) refList.get(0).get("id")).isGreaterThan(30);
@@ -134,7 +141,7 @@ public class FindAllReferencesTest {
     @Test
     public void greaterThenEqualFilter() {
         request.addFilter("id", "gte", 31);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         assertThat((Integer) refList.get(0).get("id")).isGreaterThanOrEqualTo(31);
@@ -143,7 +150,7 @@ public class FindAllReferencesTest {
     @Test
     public void lessThenFilter() {
         request.addFilter("id", "lt", 2);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         assertThat((Integer) refList.get(0).get("id")).isLessThan(2);
@@ -152,7 +159,7 @@ public class FindAllReferencesTest {
     @Test
     public void lessThenEqualFilter() {
         request.addFilter("id", "lte", 1);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         assertThat((Integer) refList.get(0).get("id")).isLessThanOrEqualTo(1);
@@ -177,7 +184,7 @@ public class FindAllReferencesTest {
         ignoreCaseFilter.setModificators(Arrays.asList("i"));
 
         request.addFilter(ignoreCaseFilter);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         assertThat((String) refList.get(0).get(regex[1][0]))
@@ -192,7 +199,7 @@ public class FindAllReferencesTest {
         FindRequest request = new FindRequest()
             .setName("orderType")
             .addFilter(field, "regex", regex);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         assertThat((String) refList.get(0).get(field)).containsPattern(regex);
@@ -216,7 +223,7 @@ public class FindAllReferencesTest {
         ));
 
         request.addFilter("ext_id", "equal", 313).addFilter(filter);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         assertThat(refList.size()).isEqualTo(1);
@@ -243,7 +250,7 @@ public class FindAllReferencesTest {
         ));
 
         request.addFilter(filter);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         assertThat(refList.size()).isEqualTo(2);
@@ -254,7 +261,7 @@ public class FindAllReferencesTest {
     @Test
     public void existsFilter() {
         request.addFilter("ext_id", "exists", true);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         refList.forEach(element -> assertThat(element.get("ext_id")).isNotNull());
@@ -263,7 +270,7 @@ public class FindAllReferencesTest {
     @Test
     public void sortAsc() {
         request.addSort("ext_id", 1);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         Map<String, Object> prevElement = refList.get(0);
         for (Map<String, Object> element : refList) {
@@ -276,7 +283,7 @@ public class FindAllReferencesTest {
     @Test
     public void sortDesc() {
         request.addSort("ext_id", -1);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         Map<String, Object> prevElement = refList.get(0);
         for (Map<String, Object> element : refList) {
@@ -289,7 +296,7 @@ public class FindAllReferencesTest {
     @Test
     public void projection() {
         request.setFields(Arrays.asList("ext_id", "name", "uptime"));
-        Map<String, Object> ref = dataProvider.find(request).get(0);
+        Map<String, Object> ref = crudService.find(request).get(0);
 
         assertThat(ref).isNotNull();
         assertThat(ref).containsKeys("ext_id", "name", "uptime");
@@ -299,7 +306,7 @@ public class FindAllReferencesTest {
     @Test
     public void limit() {
         request.setLimit(10);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         assertThat(refList.size()).isEqualTo(10);
@@ -308,7 +315,7 @@ public class FindAllReferencesTest {
     @Test
     public void offset() {
         request.addSort("id", 1).setOffset(10);
-        List<Map<String, Object>> refList = dataProvider.find(request);
+        List<Map<String, Object>> refList = crudService.find(request);
 
         assertThat(refList).isNotNull();
         refList.forEach(element -> assertThat((Integer) element.get("id")).isGreaterThan(10));

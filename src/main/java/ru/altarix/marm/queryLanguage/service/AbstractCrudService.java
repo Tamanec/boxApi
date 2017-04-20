@@ -1,13 +1,14 @@
 package ru.altarix.marm.queryLanguage.service;
 
-import ru.altarix.marm.queryLanguage.dialect.Dialect;
-import ru.altarix.marm.queryLanguage.query.Query;
+import ru.altarix.marm.queryLanguage.language.Language;
 
-abstract public class AbstractCrudService<T> implements CrudService<T> {
+import java.util.Map;
 
-    protected Dialect<? extends Query> dialect;
+abstract public class AbstractCrudService<T extends Map<String, Object>> implements CrudService<T> {
 
-    public AbstractCrudService(Dialect dialect) {
-        this.dialect = dialect;
+    protected Language language;
+
+    public AbstractCrudService(Language language) {
+        this.language = language;
     }
 }

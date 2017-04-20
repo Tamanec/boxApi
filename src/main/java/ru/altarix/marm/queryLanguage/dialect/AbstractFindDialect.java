@@ -7,9 +7,9 @@ import ru.altarix.marm.queryLanguage.request.body.Filter;
 import java.util.List;
 import java.util.Map;
 
-abstract public class AbstractFindDialect implements Dialect<Query> {
+abstract public class AbstractFindDialect<T extends Query> implements Dialect {
 
-    protected Query query;
+    protected T query;
     
     @Override
     public Query getQuery(FindRequest request) {

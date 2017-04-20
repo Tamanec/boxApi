@@ -4,12 +4,12 @@ import java.util.HashMap;
 
 public enum EntityType {
 
-    DOC("docs"),
-    TEMPLATE("templates"),
-    VIEW("views"),
-    STYLE("styles"),
-    RULE("rules"),
-    SCRIPT("scripts");
+    DOC("doc"),
+    TEMPLATE("template"),
+    VIEW("view"),
+    STYLE("style"),
+    RULE("rule"),
+    SCRIPT("script");
 
     private String name;
 
@@ -19,7 +19,7 @@ public enum EntityType {
         this.name = name;
     }
 
-    public static EntityType findByName(String name) throws IllegalArgumentException {
+    public static EntityType findByName(String name) {
         if (dictionary.isEmpty()) {
             for (EntityType operator : EntityType.values()) {
                 dictionary.put(operator.getName(), operator);
@@ -27,7 +27,7 @@ public enum EntityType {
         }
 
         if (!dictionary.containsKey(name)) {
-            throw new IllegalArgumentException("Unknown entityType name: " + name);
+            return null;
         }
 
         return dictionary.get(name);

@@ -3,8 +3,9 @@ package ru.altarix.marm.queryLanguage.service;
 import ru.altarix.marm.queryLanguage.request.FindRequest;
 
 import java.util.List;
+import java.util.Map;
 
-public interface CrudService<T> {
+public interface CrudService<T extends Map<String, Object>> {
 
     public List<T> find(FindRequest request);
 

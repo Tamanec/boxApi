@@ -5,7 +5,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.altarix.marm.queryLanguage.collection.MongoCollectionPool;
+import ru.altarix.marm.queryLanguage.collection.MongoCollectionFactory;
 import ru.altarix.marm.queryLanguage.dialect.AbstractFindDialect;
 import ru.altarix.marm.queryLanguage.dialect.FilterTranslator;
 import ru.altarix.marm.queryLanguage.query.mongo.MongoFindQuery;
@@ -19,29 +19,28 @@ import java.util.Map;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Projections.*;
 
-//@Component
+@Component
 public class MongoFindDialect extends AbstractFindDialect<MongoFindQuery> {
 
-    /*@Autowired
-    private MongoCollectionPool collectionPool;*/
+    //private MongoCollection<Document> collection;
 
-    private MongoCollection<Document> collection;
-
-    //@Autowired
+    @Autowired
     private FilterTranslator<Bson> filterTranslator;
 
-    public MongoFindDialect(
+    @Autowired
+    private MongoCollectionFactory collectionFactory;
+
+    /*public MongoFindDialect(
         MongoCollection<Document> collection,
         FilterTranslator<Bson> filterTranslator
     ) {
         this.collection = collection;
         this.filterTranslator = filterTranslator;
-    }
+    }*/
 
     @Override
     protected void initQuery(FindRequest request) {
-        //query = new MongoFindQuery(collectionPool.getCollection(request.getName()));
-        query = new MongoFindQuery(collection);
+        query = new MongoFindQuery(collectionFactory.create(request.getName()));
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.bson.Document;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestWatcher;
@@ -13,7 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.altarix.marm.queryLanguage.request.FindRequest;
 import ru.altarix.marm.queryLanguage.request.body.Filter;
-import ru.altarix.marm.queryLanguage.service.mongo.DocsCrudService;
+import ru.altarix.marm.queryLanguage.service.CrudService;
+import ru.altarix.marm.queryLanguage.service.factory.CrudServiceFactory;
 import ru.altarix.marm.utils.MarmTestWatcher;
 
 import java.util.Arrays;
@@ -28,15 +30,21 @@ import static org.junit.Assert.*;
 public class FindDocsTest {
 
     @Autowired
-    private DocsCrudService dataProvider;
+    private CrudServiceFactory crudServiceFactory;
+
+    private CrudService<Document> crudService;
 
     private Logger logger;
 
     @Rule
     public TestWatcher watcher = new MarmTestWatcher(this.getClass().getCanonicalName());
 
-    public FindDocsTest() throws Exception {
+    @Before
+    public void init() {
         logger = LogManager.getLogger(this.getClass().getCanonicalName());
+
+        FindRequest request = new FindRequest().setName("doc");
+        crudService = crudServiceFactory.create(request);
     }
 
     @Test
@@ -65,7 +73,7 @@ public class FindDocsTest {
         );
         request.addFilter(statusFilter);
 
-        Document doc = dataProvider.find(request).get(0);
+        Document doc = crudService.find(request).get(0);
 
         assertNotNull("Document not found", doc);
         assertEquals("crosswalk", JsonPath.read(doc,"$.template"));
@@ -158,7 +166,7 @@ public class FindDocsTest {
         FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(filter);
-        doc = dataProvider.find(request).get(0);
+        doc = crudService.find(request).get(0);
         assertThat(doc).isNotNull();
         assertThat((String) JsonPath.read(doc, "$.nameUpper")).contains("ХРУСТАЛЬНОГО");
     }
@@ -183,7 +191,7 @@ public class FindDocsTest {
         FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(filter);
-        Document doc = dataProvider.find(request).get(0);
+        Document doc = crudService.find(request).get(0);
         assertThat(doc).isNotNull();
         assertThat((String) JsonPath.read(doc, "$.data.ext_id")).isEqualTo("185");
     }
@@ -207,7 +215,7 @@ public class FindDocsTest {
         FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(filter);
-        Document doc = dataProvider.find(request).get(0);
+        Document doc = crudService.find(request).get(0);
         assertThat(doc).isNotNull();
         assertThat((String) JsonPath.read(doc, "$.data.ext_id")).isIn("185", "186");
     }
@@ -238,7 +246,7 @@ public class FindDocsTest {
                 "crosswalk"
             )
             .setLimit(2);
-        List<Document> docs = dataProvider.find(request);
+        List<Document> docs = crudService.find(request);
 
         assertThat(docs).isNotNull();
         assertThat(docs.size()).isEqualTo(2);
@@ -254,7 +262,7 @@ public class FindDocsTest {
                 "crosswalk"
             )
             .addSort("uptime", 1);
-        List<Document> docs = dataProvider.find(request);
+        List<Document> docs = crudService.find(request);
 
         assertThat(docs).isNotNull();
 
@@ -275,7 +283,7 @@ public class FindDocsTest {
                 "crosswalk"
             )
             .addSort("data.ext_id", -1);
-        List<Document> docs = dataProvider.find(request);
+        List<Document> docs = crudService.find(request);
 
         assertThat(docs).isNotNull();
 
@@ -296,7 +304,7 @@ public class FindDocsTest {
                 "crosswalk"
             )
             .setFields(Arrays.asList("template", "ext_id", "uptime"));
-        Document doc = dataProvider.find(request).get(0);
+        Document doc = crudService.find(request).get(0);
 
         assertThat(doc).isNotNull();
         assertThat(doc).containsKeys("template", "ext_id", "uptime");
@@ -314,7 +322,7 @@ public class FindDocsTest {
             )
             .addSort("ext_id", 1)
             .setOffset(10);
-        Document doc = dataProvider.find(request).get(0);
+        Document doc = crudService.find(request).get(0);
 
         assertThat(doc).isNotNull();
         assertThat((String) JsonPath.read(doc, "$.ext_id")).isNotEqualTo("185");
@@ -338,7 +346,7 @@ public class FindDocsTest {
                 operator,
                 fieldValue
             );
-        return dataProvider.find(request).get(0);
+        return crudService.find(request).get(0);
     }
 
 }
