@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 public enum Operator {
 
-    EQUAL ("equal"),
-    NOT_EQUAL ("ne"),
+    EQUAL("equal"),
+    NOT_EQUAL("ne"),
     IN("in"),
     NOT_IN("nin"),
     GREATER_THAN("gt"),

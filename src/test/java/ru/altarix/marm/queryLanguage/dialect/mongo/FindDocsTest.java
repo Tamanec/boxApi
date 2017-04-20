@@ -1,4 +1,4 @@
-package ru.altarix.marm.queryLanguage.dataProvider.mongo;
+package ru.altarix.marm.queryLanguage.dialect.mongo;
 
 import com.jayway.jsonpath.JsonPath;
 import org.apache.log4j.LogManager;
@@ -11,8 +11,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.altarix.marm.queryLanguage.request.FindAllRequest;
+import ru.altarix.marm.queryLanguage.request.FindRequest;
 import ru.altarix.marm.queryLanguage.request.body.Filter;
+import ru.altarix.marm.queryLanguage.service.mongo.DocsCrudService;
 import ru.altarix.marm.utils.MarmTestWatcher;
 
 import java.util.Arrays;
@@ -24,17 +25,17 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class FindAllDocsTest {
+public class FindDocsTest {
 
     @Autowired
-    private MongoDAO dataProvider;
+    private DocsCrudService dataProvider;
 
     private Logger logger;
 
     @Rule
     public TestWatcher watcher = new MarmTestWatcher(this.getClass().getCanonicalName());
 
-    public FindAllDocsTest() throws Exception {
+    public FindDocsTest() throws Exception {
         logger = LogManager.getLogger(this.getClass().getCanonicalName());
     }
 
@@ -49,7 +50,7 @@ public class FindAllDocsTest {
     public void twoFilters() {
         logger.info("Test 'twoFilters': (template equal crosswalk) and (status equal imported)");
 
-        FindAllRequest request = new FindAllRequest()
+        FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(
                 "template",
@@ -154,7 +155,7 @@ public class FindAllDocsTest {
         logger.info("Preparing request: nameUpper regex " + regex[4]);
         Filter filter = new Filter("nameUpper", "regex", regex[4]);
         filter.setModificators(Arrays.asList("i"));
-        FindAllRequest request = new FindAllRequest()
+        FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(filter);
         doc = dataProvider.find(request).get(0);
@@ -179,7 +180,7 @@ public class FindAllDocsTest {
             secondFilter
         ));
 
-        FindAllRequest request = new FindAllRequest()
+        FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(filter);
         Document doc = dataProvider.find(request).get(0);
@@ -203,7 +204,7 @@ public class FindAllDocsTest {
             firstFilter,
             secondFilter
         ));
-        FindAllRequest request = new FindAllRequest()
+        FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(filter);
         Document doc = dataProvider.find(request).get(0);
@@ -229,7 +230,7 @@ public class FindAllDocsTest {
 
     @Test
     public void limit() {
-        FindAllRequest request = new FindAllRequest()
+        FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(
                 "template",
@@ -245,7 +246,7 @@ public class FindAllDocsTest {
 
     @Test
     public void sortAsc() {
-        FindAllRequest request = new FindAllRequest()
+        FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(
                 "template",
@@ -266,7 +267,7 @@ public class FindAllDocsTest {
 
     @Test
     public void sortDesc() {
-        FindAllRequest request = new FindAllRequest()
+        FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(
                 "template",
@@ -287,7 +288,7 @@ public class FindAllDocsTest {
 
     @Test
     public void projection() {
-        FindAllRequest request = new FindAllRequest()
+        FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(
                 "template",
@@ -304,7 +305,7 @@ public class FindAllDocsTest {
 
     @Test
     public void offset() {
-        FindAllRequest request = new FindAllRequest()
+        FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(
                 "ext_id",
@@ -330,7 +331,7 @@ public class FindAllDocsTest {
 
     private Document getDocument(String fieldName, String operator, Object fieldValue) {
         logger.info("Preparing request: " + fieldName + " " + operator + " " + fieldValue);
-        FindAllRequest request = new FindAllRequest()
+        FindRequest request = new FindRequest()
             .setName("doc")
             .addFilter(
                 fieldName,

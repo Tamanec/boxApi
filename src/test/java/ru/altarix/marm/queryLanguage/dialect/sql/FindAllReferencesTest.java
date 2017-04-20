@@ -1,4 +1,4 @@
-package ru.altarix.marm.queryLanguage.dataProvider.sql;
+package ru.altarix.marm.queryLanguage.dialect.sql;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -10,8 +10,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.altarix.marm.queryLanguage.request.FindAllRequest;
+import ru.altarix.marm.queryLanguage.request.FindRequest;
 import ru.altarix.marm.queryLanguage.request.body.Filter;
+import ru.altarix.marm.queryLanguage.service.sql.ReferenceCrudService;
 import ru.altarix.marm.utils.MarmTestWatcher;
 
 import java.util.*;
@@ -24,11 +25,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FindAllReferencesTest {
 
     @Autowired
-    private SqlDAO dataProvider;
+    private ReferenceCrudService dataProvider;
 
     private Logger logger;
 
-    private FindAllRequest request;
+    private FindRequest request;
 
     @Rule
     public TestWatcher watcher = new MarmTestWatcher(this.getClass().getCanonicalName());
@@ -39,7 +40,7 @@ public class FindAllReferencesTest {
 
     @Before
     public void initTest() {
-        request = new FindAllRequest().setName("orderType");
+        request = new FindRequest().setName("orderType");
     }
 
     @Test
@@ -188,7 +189,7 @@ public class FindAllReferencesTest {
     }
 
     private void checkRegex(String field, String regex) {
-        FindAllRequest request = new FindAllRequest()
+        FindRequest request = new FindRequest()
             .setName("orderType")
             .addFilter(field, "regex", regex);
         List<Map<String, Object>> refList = dataProvider.find(request);

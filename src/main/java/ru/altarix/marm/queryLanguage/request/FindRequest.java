@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class FindAllRequest {
+public class FindRequest {
 
     private String name;
 
@@ -21,12 +21,12 @@ public class FindAllRequest {
 
     private int offset = 0;
 
-    public FindAllRequest addFilter(Filter filter) {
+    public FindRequest addFilter(Filter filter) {
         filters.add(filter);
         return this;
     }
 
-    public FindAllRequest addFilter(
+    public FindRequest addFilter(
         String paramName,
         String operator,
         Object value
@@ -39,11 +39,15 @@ public class FindAllRequest {
         return this;
     }
 
+    public Boolean hasFilters() {
+        return !filters.isEmpty();
+    }
+
     public String getName() {
         return name;
     }
 
-    public FindAllRequest setName(String name) {
+    public FindRequest setName(String name) {
         this.name = name;
         return this;
     }
@@ -60,7 +64,7 @@ public class FindAllRequest {
         return limit;
     }
 
-    public FindAllRequest setLimit(int limit) {
+    public FindRequest setLimit(int limit) {
         this.limit = limit;
         return this;
     }
@@ -69,38 +73,38 @@ public class FindAllRequest {
         return sort;
     }
 
-    public FindAllRequest setSort(Map<String, Integer> sort) {
+    public FindRequest setSort(Map<String, Integer> sort) {
         this.sort = sort;
         return this;
     }
 
-    public FindAllRequest addSort(String fieldName, Integer direction) {
+    public FindRequest addSort(String fieldName, Integer direction) {
         sort.put(fieldName, direction);
         return this;
     }
 
     public Boolean hasSort() {
-        return sort.size() != 0;
+        return !sort.isEmpty();
     }
 
     public List<String> getFields() {
         return fields;
     }
 
-    public FindAllRequest setFields(List<String> fields) {
+    public FindRequest setFields(List<String> fields) {
         this.fields = fields;
         return this;
     }
 
     public Boolean hasProjection() {
-        return fields.size() != 0;
+        return !fields.isEmpty();
     }
 
     public int getOffset() {
         return offset;
     }
 
-    public FindAllRequest setOffset(int offset) {
+    public FindRequest setOffset(int offset) {
         this.offset = offset;
         return this;
     }

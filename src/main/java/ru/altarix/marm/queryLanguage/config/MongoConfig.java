@@ -1,4 +1,4 @@
-package ru.altarix.marm.config;
+package ru.altarix.marm.queryLanguage.config;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;

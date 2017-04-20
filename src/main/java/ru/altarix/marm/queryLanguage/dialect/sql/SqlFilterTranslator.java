@@ -1,18 +1,18 @@
-package ru.altarix.marm.queryLanguage.dataProvider.sql;
+package ru.altarix.marm.queryLanguage.dialect.sql;
 
 import org.springframework.stereotype.Service;
-import ru.altarix.marm.queryLanguage.dataProvider.FilterParser;
+import ru.altarix.marm.queryLanguage.dialect.FilterTranslator;
 import ru.altarix.marm.queryLanguage.request.body.Filter;
 import ru.altarix.marm.queryLanguage.request.body.Operator;
 
 import java.util.*;
 
 @Service
-public class SqlFilterParser implements FilterParser<SqlClause> {
+public class SqlFilterTranslator implements FilterTranslator<SqlClause> {
 
     private Map<Operator, String> sqlOpsMap = new HashMap<>();
 
-    public SqlFilterParser() {
+    public SqlFilterTranslator() {
         sqlOpsMap.put(Operator.EQUAL, " = ");
         sqlOpsMap.put(Operator.NOT_EQUAL, " != ");
         sqlOpsMap.put(Operator.IN, " in ");
@@ -28,7 +28,7 @@ public class SqlFilterParser implements FilterParser<SqlClause> {
     }
 
     @Override
-    public List<SqlClause> parseFilters(List<Filter> requestFilters) {
+    public List<SqlClause> translate(List<Filter> requestFilters) {
         List<SqlClause> filters = new LinkedList<>();
         for (Filter filter : requestFilters) {
             filters.add(getSqlFilter(filter));
@@ -88,7 +88,7 @@ public class SqlFilterParser implements FilterParser<SqlClause> {
 
             case AND:
             case OR:
-                List<SqlClause> subClauses = parseFilters((List<Filter>) filter.getValue());
+                List<SqlClause> subClauses = translate((List<Filter>) filter.getValue());
 
                 List<String> templates = new LinkedList<>();
                 subClauses.forEach((sqlClause -> {

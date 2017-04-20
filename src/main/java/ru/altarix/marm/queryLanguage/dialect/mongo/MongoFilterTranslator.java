@@ -1,10 +1,10 @@
-package ru.altarix.marm.queryLanguage.dataProvider.mongo;
+package ru.altarix.marm.queryLanguage.dialect.mongo;
 
 import antlr.StringUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.springframework.stereotype.Service;
-import ru.altarix.marm.queryLanguage.dataProvider.FilterParser;
+import org.springframework.stereotype.Component;
+import ru.altarix.marm.queryLanguage.dialect.FilterTranslator;
 import ru.altarix.marm.queryLanguage.request.body.Filter;
 import ru.altarix.marm.queryLanguage.request.body.Operator;
 
@@ -14,10 +14,10 @@ import java.util.regex.Pattern;
 
 import static com.mongodb.client.model.Filters.*;
 
-@Service
-public class MongoFilterParser implements FilterParser<Bson> {
+@Component
+public class MongoFilterTranslator implements FilterTranslator<Bson> {
 
-    public List<Bson> parseFilters(List<Filter> requestFilters) {
+    public List<Bson> translate(List<Filter> requestFilters) {
         List<Bson> filters = new LinkedList<>();
         for (Filter filter : requestFilters) {
             filters.add(getMongoFilter(filter));
@@ -75,10 +75,10 @@ public class MongoFilterParser implements FilterParser<Bson> {
                 mongoFilter = new Document(filter.getParamName(), regex);
                 break;
             case AND:
-                mongoFilter = and(parseFilters((List<Filter>) filter.getValue()));
+                mongoFilter = and(translate((List<Filter>) filter.getValue()));
                 break;
             case OR:
-                mongoFilter = or(parseFilters((List<Filter>) filter.getValue()));
+                mongoFilter = or(translate((List<Filter>) filter.getValue()));
                 break;
             case EXISTS:
                 mongoFilter = new Document(

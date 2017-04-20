@@ -1,4 +1,4 @@
-package ru.altarix.marm.queryLanguage.dataProvider.sql;
+package ru.altarix.marm.queryLanguage.dialect.sql;
 
 import java.util.LinkedList;
 import java.util.List;
